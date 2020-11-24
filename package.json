@@ -1,0 +1,19 @@
+{
+  "name": "MaxBot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Max Ratmeyer",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.0",
+    "express": "^4.17.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/MaxRatmeyer/MaxBot.git"
+  }
+}
