@@ -49,10 +49,15 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             player.voice.setChannel(newChannel.id)
             channelRooms.set(newChannel.id, [ player.id ])
 
-        } else if (channelRooms.has(channel.id)) { //User joins a channel room
+        }
+        
+        if (channelRooms.has(channel.id)) { //User joins a channel room
 
-            channelRooms.get(channel.id).push(player.id)
-            console.log("Added " + player.displayName + " to room " + channel.id)
+            // If player isn't already in the room add them
+            if (!channelRooms.get(channel.id).includes(player.id)) {
+                channelRooms.get(channel.id).push(player.id)
+                console.log("Added " + player.displayName + " to room " + channel.id)
+            }
 
         }
 
@@ -86,7 +91,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                 const newAdminID = channelRooms.get(channel.id)[0]
                 const newAdmin = oldState.guild.members.cache.get(newAdminID);
 
-                console.log("Because " + player.displayaName + " left a room they owned, " + newAdminID.displayName + " will take over.")
+                console.log("Because " + player.displayName + " left a room they owned, " + newAdmin.displayName + " will take over.")
 
                 channel.permissionOverwrites.get(oldAdminID).delete();
                 channel.overwritePermissions([
