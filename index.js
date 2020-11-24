@@ -9,17 +9,77 @@ const joinToCreateChannelID = '780570910171463680'
 const token = process.env.TOKEN
 
 let channelRooms = new Map()
+let roleSetup = new Map()
+
+const prefix = '!'
+
+const offLimits = [ "ADMIN", "ADMINISTRATOR", "ADMINISTRAITOR", "MAXBOT", "INTERROGATION", "QUARANTINE" ]
 
 client.once('ready', () => {
 	console.log('MaxBot connected and ready to go!')
 })
 
+client.on('message', async msg => {
+    const author = msg.author
+    const authorID = author.id
+    const content = msg.content
 
-client.on('message', msg => {
-    if (msg.content.toUpperCase() === 'Poggers'.toUpperCase()) {
-        msg.channel.send('Poggers!');
+    // Request sent in #commands
+    if (msg.channel.id === '767194564565532682') {
+        // A setup process is already registered
+        if (roleSetup.get(authorID) !== undefined) {
+            const timeDifference = Math.floor((Date.now() - roleSetup.get(authorID).startTime) / 1000)
+            
+            // 5 minutes since the first request
+            if (timeDifference <= 300) {
+                if (content.toUpperCase() == 'stop'.toUpperCase() || content.toUpperCase() == 'exit'.toUpperCase() || content.toUpperCase() == 'cancel'.toUpperCase()) {
+                    roleSetup.delete(authorID)
+                    msg.channel.send(author.toString() + " Gotcha, cancelled your setup. Come back soon!")
+                } else if (roleSetup.get(authorID).stage == 1) {
+                    if (offLimits.includes(content.toUpperCase())) {
+                        msg.channel.send(author.toString() + " Hold your horses! That role is off limits. Try again with another name.")
+                        return
+                    }
+                    roleSetup.get(authorID).name = content
+                    roleSetup.get(authorID).stage = 2
+                    msg.channel.send(author.toString() + " '" + content + '\', got it. What color would you like it to be?')
+                } else if (roleSetup.get(authorID).stage == 2) {
+                    if (Discord.Util.resolveColor(content.toUpperCase()).toString() == "NaN") {
+                        msg.channel.send(author.toString() + " Invalid color. Try again!")
+                        return
+                    }
+                    roleSetup.get(authorID).color = content
+                    let newRole = await msg.channel.guild.roles.create({
+                        data: {
+                            name: roleSetup.get(authorID).name,
+                            color: roleSetup.get(authorID).color.toUpperCase(),
+                        }
+                    }).then(console.log).catch(console.error);
+                    // msg.member.roles.add(await msg.guild.roles.fetch(newRole).id)
+                    msg.channel.send(author.toString() + ' Thanks! Creating role ' + roleSetup.get(authorID).name + ' with the color ' + roleSetup.get(authorID).color + ' now.')
+                    roleSetup.delete(authorID)
+                }
+            } else {
+                roleSetup.delete(authorID)
+            }
+        }
+    
+        // Someone ran ! prefix
+        if (msg.content.startsWith(prefix)) {
+            const args = msg.content.slice(prefix.length).trim().split(/ +/);
+            const command = args.shift().toLowerCase();
+        
+            // Someone ran !vanity and isn't registered
+            if (command === 'vanity' && roleSetup.get(authorID) === undefined) {
+                msg.channel.send(author.toString() + ' What do you want your vanity role to be named?')
+                roleSetup.set(authorID, { 
+                    startTime: Date.now(),
+                    stage: 1
+                })
+            }
+        }
     }
-});
+})
 
 client.on('voiceStateUpdate', async (oldState, newState) => {
     const oldUserChannel = oldState.channel
