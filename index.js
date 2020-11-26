@@ -150,8 +150,9 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             if (channelRooms.get(channel.id)[0] !== oldAdminID) {
                 const newAdminID = channelRooms.get(channel.id)[0]
                 const newAdmin = oldState.guild.members.cache.get(newAdminID);
+                const newAdminName = newAdmin.displayName
 
-                console.log("Because " + player.displayName + " left a room they owned, " + newAdmin.displayName + " will take over.")
+                console.log("Because " + player.displayName + " left a room they owned, " + newAdminName + " will take over.")
 
                 channel.permissionOverwrites.get(oldAdminID).delete();
                 channel.overwritePermissions([
@@ -160,7 +161,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                         allow: ['MANAGE_CHANNELS']
                     }
                 ])
-                channel.setName(newAdmin.displayName + "'s channel")
+                channel.setName(newAdminName + "'s channel")
             }
         }
 
