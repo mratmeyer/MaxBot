@@ -1,6 +1,6 @@
-const express = require('express')
-const app = express();
-app.disable('x-powered-by')
+// const express = require('express')
+// const app = express();
+// app.disable('x-powered-by')
 
 const Discord = require('discord.js')
 const client = new Discord.Client()
@@ -129,15 +129,15 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         const player = oldState.member
         const channel = oldUserChannel
 
-        // User leaves a channel room with 0 members - delete it
-        if (channelRooms.has(channel.id) && channel.members.size == 0) {
-            console.log("Deleted room " + channel.id)
-            channelRooms.delete(channel.id)
-            channel.delete()
-        }
-
         // Users leaves a channel room with more than 0 members - see if we can transfer ownership
         if (channelRooms.has(channel.id)) {
+            // User leaves a channel room with 0 members - delete it
+            if (channel.members.size == 0) {
+                console.log("Deleted room " + channel.id)
+                channelRooms.delete(channel.id)
+                channel.delete()
+            }
+
             const oldAdminID = channelRooms.get(channel.id)[0]
 
             const index = channelRooms.get(channel.id).indexOf(player.id)
@@ -170,10 +170,10 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
 client.login(token)
 
-app.get('/*', (req, res) => {
-    res.status(404).send('Beep boop.')
-})
+// app.get('/*', (req, res) => {
+//     res.status(404).send('Beep boop.')
+// })
 
-app.listen(8080, () => {
-    console.log('Health checks open on port 8080.');
-});
+// app.listen(8080, () => {
+//     console.log('Health checks open on port 8080.');
+// });
