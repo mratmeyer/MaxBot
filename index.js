@@ -2,6 +2,8 @@ const express = require('express')
 const app = express();
 app.disable('x-powered-by')
 
+const PORT = process.env.PORT || 8080
+
 const Discord = require('discord.js')
 const client = new Discord.Client()
 
@@ -173,6 +175,6 @@ app.get('/*', (req, res) => {
     res.status(404).send('Beep boop.')
 })
 
-app.listen(8080, () => {
-    console.log('Health checks open on port 8080.');
+app.listen(PORT, () => {
+    console.log('Health checks open on port ' + PORT + '.');
 });
