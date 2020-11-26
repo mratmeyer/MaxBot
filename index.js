@@ -1,6 +1,6 @@
-// const express = require('express')
-// const app = express();
-// app.disable('x-powered-by')
+const express = require('express')
+const app = express();
+app.disable('x-powered-by')
 
 const Discord = require('discord.js')
 const client = new Discord.Client()
@@ -169,10 +169,10 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
 client.login(token)
 
-// app.get('/*', (req, res) => {
-//     res.status(404).send('Beep boop.')
-// })
+app.get('/*', (req, res) => {
+    res.status(404).send('Beep boop.')
+})
 
-// app.listen(8080, () => {
-//     console.log('Health checks open on port 8080.');
-// });
+app.listen(8080, () => {
+    console.log('Health checks open on port 8080.');
+});
