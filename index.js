@@ -131,15 +131,15 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         const player = oldState.member
         const channel = oldUserChannel
 
+        // User leaves a channel room with 0 members - delete it
+        if (channelRooms.has(channel.id) && channel.members.size == 0) {
+            console.log("Deleted room " + channel.id)
+            channelRooms.delete(channel.id)
+            channel.delete()
+        }
+
         // Users leaves a channel room with more than 0 members - see if we can transfer ownership
         if (channelRooms.has(channel.id)) {
-            // User leaves a channel room with 0 members - delete it
-            if (channel.members.size == 0) {
-                console.log("Deleted room " + channel.id)
-                channelRooms.delete(channel.id)
-                channel.delete()
-            }
-
             const oldAdminID = channelRooms.get(channel.id)[0]
 
             const index = channelRooms.get(channel.id).indexOf(player.id)
