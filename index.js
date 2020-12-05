@@ -2,7 +2,7 @@
 // const app = express();
 // app.disable('x-powered-by')
 
-const PORT = process.env.PORT || 8080
+// const PORT = process.env.PORT || 8080
 
 const Discord = require('discord.js')
 const client = new Discord.Client()
@@ -10,12 +10,11 @@ const client = new Discord.Client()
 const joinToCreateChannelID = '780570910171463680'
 const token = process.env.TOKEN
 
-let channelRooms = new Map()
-let roleSetup = new Map()
-
 const prefix = '!'
-
 const offLimits = [ "ADMIN", "ADMINISTRATOR", "ADMINISTRAITOR", "MAXBOT", "INTERROGATION", "QUARANTINE" ]
+
+let privateChannels = new Map()
+let roleSetup = new Map()
 
 client.once('ready', () => {
 	console.log('MaxBot connected and ready to go!')
@@ -84,20 +83,21 @@ client.on('message', async msg => {
 })
 
 client.on('voiceStateUpdate', async (oldState, newState) => {
-    const oldUserChannel = oldState.channel
-    const newUserChannel = newState.channel
+    const oldChannel = oldState.channel
+    const newChannel = newState.channel
 
     // User joins a channel
-    if (newUserChannel !== null) {
+    if (newChannel !== null) {
 
         const player = newState.member
         const guild = newState.guild
-        const channel = newUserChannel
+        const channel = newChannel
 
-        // User join the 'Join to Create' channel
-        if (channel.id == joinToCreateChannelID) {
+        // User joins the 'Join to Create' channel
+        if (channel.id === joinToCreateChannelID) {
 
-            let newChannel = await guild.channels.create(player.displayName + "'s channel", { 
+            // Generate a new private channel
+            let privateChannel = await guild.channels.create(player.displayName + "'s channel", { 
                 type: 'voice', 
                 parent: '627381429877211150',
                 permissionOverwrites: [
@@ -108,16 +108,18 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                 ]
             }).then(console.log("New room for: " + player.displayName + "(" + player.id + ")")).catch(console.error)
 
-            player.voice.setChannel(newChannel.id)
-            channelRooms.set(newChannel.id, [ player.id ])
+            // Move the player to the privte channel and add it to database
+            player.voice.setChannel(privateChannel.id)
+            privateChannels.set(privateChannel.id, [ player.id ])
 
         }
         
-        if (channelRooms.has(channel.id)) { //User joins a channel room
+        //User joins an existing room
+        if (privateChannels.has(channel.id)) {
 
             // If player isn't already in the room add them
-            if (!channelRooms.get(channel.id).includes(player.id)) {
-                channelRooms.get(channel.id).push(player.id)
+            if (!privateChannels.get(channel.id).includes(player.id)) {
+                privateChannels.get(channel.id).push(player.id)
                 console.log("Added " + player.displayName + " to room " + channel.id)
             }
 
@@ -126,31 +128,31 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
     }
 
     // User leaves a channel - The old channel exists and either the new channel doesn't exist(they left) or the new channel is different(they switched channels)
-    if (oldUserChannel !== null && (newUserChannel === null || oldUserChannel !== newUserChannel)) {
+    if (oldChannel !== null && (newChannel === null || oldChannel !== newChannel)) {
 
         const player = oldState.member
-        const channel = oldUserChannel
+        const channel = oldChannel
 
         // User leaves a channel room with 0 members - delete it
-        if (channelRooms.has(channel.id) && channel.members.size == 0) {
+        if (privateChannels.has(channel.id) && channel.members.size === 0) {
             console.log("Deleted room " + channel.id)
-            channelRooms.delete(channel.id)
+            privateChannels.delete(channel.id)
             channel.delete()
         }
 
         // Users leaves a channel room with more than 0 members - see if we can transfer ownership
-        if (channelRooms.has(channel.id)) {
-            const oldAdminID = channelRooms.get(channel.id)[0]
+        if (privateChannels.has(channel.id)) {
+            const oldAdminID = privateChannels.get(channel.id)[0]
 
-            const index = channelRooms.get(channel.id).indexOf(player.id)
+            const index = privateChannels.get(channel.id).indexOf(player.id)
             if (index > -1) {
-                channelRooms.get(channel.id).splice(index, 1);
+                privateChannels.get(channel.id).splice(index, 1);
             }
             
             console.log(player.displayName + " left a room.")
 
-            if (channelRooms.get(channel.id)[0] !== oldAdminID) {
-                const newAdminID = channelRooms.get(channel.id)[0]
+            if (privateChannels.get(channel.id)[0] !== oldAdminID) {
+                const newAdminID = privateChannels.get(channel.id)[0]
                 const newAdmin = oldState.guild.members.cache.get(newAdminID)
 
                 console.log("Because " + player.displayName + " left a room they owned, " + newAdmin.displayName + " will take over.")
