@@ -125,8 +125,8 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
     }
 
-    // User leaves a channel
-    if (oldUserChannel !== null) {
+    // User leaves a channel - The old channel exists and either the new channel doesn't exist(they left) or the new channel is different(they switched channels)
+    if (oldUserChannel !== null && (newUserChannel === null || oldUserChannel !== newUserChannel)) {
 
         const player = oldState.member
         const channel = oldUserChannel
