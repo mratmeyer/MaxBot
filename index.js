@@ -1,6 +1,6 @@
-const express = require('express')
-const app = express();
-app.disable('x-powered-by')
+// const express = require('express')
+// const app = express();
+// app.disable('x-powered-by')
 
 const PORT = process.env.PORT || 8080
 
@@ -171,10 +171,10 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
 client.login(token)
 
-app.get('/*', (req, res) => {
-    res.status(404).send('Beep boop.')
-})
+// app.get('/*', (req, res) => {
+//     res.status(404).send('Beep boop.')
+// })
 
-app.listen(PORT, () => {
-    console.log('Health checks open on port ' + PORT + '.');
-});
+// app.listen(PORT, () => {
+//     console.log('Health checks open on port ' + PORT + '.');
+// });

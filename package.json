@@ -9,8 +9,7 @@
   "author": "Max Ratmeyer",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.5.0",
-    "express": "^4.17.1"
+    "discord.js": "^12.5.0"
   },
   "repository": {
     "type": "git",
