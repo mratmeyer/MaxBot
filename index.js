@@ -7,16 +7,19 @@
 const Discord = require('discord.js')
 const client = new Discord.Client()
 
-const joinToCreateChannelID = '780570910171463680'
 const token = process.env.TOKEN
 
 const prefix = '!'
 const offLimits = [ "ADMIN", "ADMINISTRATOR", "ADMINISTRAITOR", "MAXBOT", "INTERROGATION", "QUARANTINE" ]
 
+let channelConfig = new Map()
 let privateChannels = new Map()
 let roleSetup = new Map()
 
 client.once('ready', () => {
+    // Matches join to create channel ID with the parent category to create the private channel under
+    channelConfig.set('780570910171463680', '627381429877211150')
+
 	console.log('MaxBot connected and ready to go!')
 })
 
@@ -94,12 +97,12 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         const channel = newChannel
 
         // User joins the 'Join to Create' channel
-        if (channel.id === joinToCreateChannelID) {
+        if (channelConfig.has(channel.id)) {
 
             // Generate a new private channel
             let privateChannel = await guild.channels.create(player.displayName + "'s channel", { 
                 type: 'voice', 
-                parent: '627381429877211150',
+                parent: channelConfig.get(channel.id),
                 permissionOverwrites: [
                     {
                         id: player.id,
