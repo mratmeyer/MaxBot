@@ -110,11 +110,11 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                     },
                 ]
             }).then(console.log(Date.now() + ": A new room was created for: " + player.displayName + "(" + player.id + ")")).catch(console.error)
-            console.log(privateChannels.get(privateChannel.id))
 
             // Move the player to the privte channel and add it to database
             player.voice.setChannel(privateChannel.id)
             privateChannels.set(privateChannel.id, [ player.id ])
+            console.log(privateChannels.get(privateChannel.id))
 
         }
         
@@ -125,7 +125,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             if (!privateChannels.get(channel.id).includes(player.id)) {
                 privateChannels.get(channel.id).push(player.id)
                 console.log(Date.now() + ": Added " + player.displayName + " to room " + channel.id)
-                console.log(privateChannels.get(privateChannel.id))
+                console.log(privateChannels.get(channel.id))
             }
 
         }
@@ -141,7 +141,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         // User leaves a channel room with 0 members - delete it
         if (privateChannels.has(channel.id) && channel.members.size === 0) {
             console.log(Date.now() + "Deleted room " + channel.id + " due to " + player.displayName + " leaving")
-            console.log(privateChannels.get(privateChannel.id))
+            console.log(privateChannels.get(channel.id))
             privateChannels.delete(channel.id)
             channel.delete()
         }
@@ -156,7 +156,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             }
             
             console.log(player.displayName + " left a room")
-            console.log(privateChannels.get(privateChannel.id))
+            console.log(privateChannels.get(channel.id))
 
             const newAdminID = privateChannels.get(channel.id)[0]
 
@@ -164,7 +164,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                 const newAdmin = oldState.guild.members.cache.get(newAdminID)
 
                 console.log("Because " + player.displayName + " left a room they owned, " + newAdmin.displayName + " will take over.")
-                console.log(privateChannels.get(privateChannel.id))
+                console.log(privateChannels.get(channel.id))
 
                 channel.setName(newAdmin.displayName + "'s channel")
                 channel.permissionOverwrites.get(oldAdminID).delete();
