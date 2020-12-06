@@ -141,8 +141,8 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         // User leaves a channel room with 0 members - delete it
         if (privateChannels.has(channel.id) && channel.members.size === 0) {
             console.log(Date.now() + "Deleted room " + channel.id + " due to " + player.displayName + " leaving")
-            console.log(privateChannels.get(channel.id))
             privateChannels.delete(channel.id)
+            console.log(privateChannels.get(channel.id))
             channel.delete()
         }
 
