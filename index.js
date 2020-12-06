@@ -109,7 +109,8 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                         allow: ['MANAGE_CHANNELS']
                     },
                 ]
-            }).then(console.log("New room for: " + player.displayName + "(" + player.id + ")")).catch(console.error)
+            }).then(console.log(Date.now() + ": A new room was created for: " + player.displayName + "(" + player.id + ")")).catch(console.error)
+            console.log(privateChannels.get(privateChannel.id))
 
             // Move the player to the privte channel and add it to database
             player.voice.setChannel(privateChannel.id)
@@ -123,7 +124,8 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             // If player isn't already in the room add them
             if (!privateChannels.get(channel.id).includes(player.id)) {
                 privateChannels.get(channel.id).push(player.id)
-                console.log("Added " + player.displayName + " to room " + channel.id)
+                console.log(Date.now() + ": Added " + player.displayName + " to room " + channel.id)
+                console.log(privateChannels.get(privateChannel.id))
             }
 
         }
@@ -138,12 +140,13 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
         // User leaves a channel room with 0 members - delete it
         if (privateChannels.has(channel.id) && channel.members.size === 0) {
-            console.log("Deleted room " + channel.id)
+            console.log(Date.now() + "Deleted room " + channel.id + " due to " + player.displayName + " leaving")
+            console.log(privateChannels.get(privateChannel.id))
             privateChannels.delete(channel.id)
             channel.delete()
         }
 
-        // Users leaves a channel room with more than 0 members - see if we can transfer ownership
+        // User leaves a channel room with more than 0 members - see if we can transfer ownership
         if (privateChannels.has(channel.id)) {
             const oldAdminID = privateChannels.get(channel.id)[0]
 
@@ -152,14 +155,18 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                 privateChannels.get(channel.id).splice(index, 1);
             }
             
-            console.log(player.displayName + " left a room.")
+            console.log(player.displayName + " left a room")
+            console.log(privateChannels.get(privateChannel.id))
 
-            if (privateChannels.get(channel.id)[0] !== oldAdminID) {
-                const newAdminID = privateChannels.get(channel.id)[0]
+            const newAdminID = privateChannels.get(channel.id)[0]
+
+            if (newAdminID !== oldAdminID) {
                 const newAdmin = oldState.guild.members.cache.get(newAdminID)
 
                 console.log("Because " + player.displayName + " left a room they owned, " + newAdmin.displayName + " will take over.")
+                console.log(privateChannels.get(privateChannel.id))
 
+                channel.setName(newAdmin.displayName + "'s channel")
                 channel.permissionOverwrites.get(oldAdminID).delete();
                 channel.overwritePermissions([
                     {
@@ -167,7 +174,6 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                         allow: ['MANAGE_CHANNELS']
                     }
                 ])
-                channel.setName(newAdmin.displayName + "'s channel")
             }
         }
 
