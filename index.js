@@ -155,7 +155,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                 privateChannels.get(channel.id).splice(index, 1);
             }
             
-            console.log(player.displayName + " left a room")
+            console.log(Date.now() + player.displayName + " left a room")
             console.log(privateChannels.get(channel.id))
 
             const newAdminID = privateChannels.get(channel.id)[0]
@@ -163,7 +163,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             if (newAdminID !== oldAdminID) {
                 const newAdmin = oldState.guild.members.cache.get(newAdminID)
 
-                console.log("Because " + player.displayName + " left a room they owned, " + newAdmin.displayName + " will take over.")
+                console.log(Date.now() + "Because " + player.displayName + " left a room they owned, " + newAdmin.displayName + " will take over.")
                 console.log(privateChannels.get(channel.id))
 
                 channel.setName(newAdmin.displayName + "'s channel")
