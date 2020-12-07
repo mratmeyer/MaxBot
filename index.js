@@ -166,14 +166,16 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                 console.log(Date.now() + "Because " + player.displayName + " left a room they owned, " + newAdmin.displayName + " will take over.")
                 console.log(privateChannels.get(channel.id))
 
-                channel.permissionOverwrites.get(oldAdminID).delete();
-                channel.overwritePermissions([
-                    {
-                        id: newAdminID,
-                        allow: ['MANAGE_CHANNELS']
-                    }
-                ])
-                channel.setName(newAdmin.displayName + "'s channel")
+                
+                channel.permissionOverwrites.get(oldAdminID).delete()
+                    .then(channel.overwritePermissions([
+                        {
+                            id: newAdminID,
+                            allow: ['MANAGE_CHANNELS']
+                        }
+                    ]))
+                    .then(channel.setName(newAdmin.displayName + "'s channel"))
+                    .catch(console.error)
             }
         }
 
