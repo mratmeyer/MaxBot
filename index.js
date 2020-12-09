@@ -20,7 +20,7 @@ client.once('ready', () => {
     // Matches join to create channel ID with the parent category to create the private channel under
     channelConfig.set('780570910171463680', '627381429877211150')
 
-	console.log('MaxBot connected and ready to go!')
+    console.log('MaxBot connected and ready to go!')
 })
 
 client.on('message', async msg => {
@@ -109,12 +109,11 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                         allow: ['MANAGE_CHANNELS']
                     },
                 ]
-            }).then(console.log(Date.now() + ": A new room was created for: " + player.displayName + "(" + player.id + ")")).catch(console.error)
+            }).then(console.log("New room created for: " + player.displayName + "(" + player.id + ")")).catch(console.error)
 
-            // Move the player to the privte channel and add it to database
+            // Move the player to the private channel and add it to database
             player.voice.setChannel(privateChannel.id)
             privateChannels.set(privateChannel.id, [ player.id ])
-            console.log(privateChannels.get(privateChannel.id))
 
         }
         
@@ -124,8 +123,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             // If player isn't already in the room add them
             if (!privateChannels.get(channel.id).includes(player.id)) {
                 privateChannels.get(channel.id).push(player.id)
-                console.log(Date.now() + ": Added " + player.displayName + " to room " + channel.id)
-                console.log(privateChannels.get(channel.id))
+                console.log("Added " + player.displayName + " to room " + channel.id)
             }
 
         }
@@ -140,9 +138,8 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
         // User leaves a channel room with 0 members - delete it
         if (privateChannels.has(channel.id) && channel.members.size === 0) {
-            console.log(Date.now() + "Deleted room " + channel.id + " due to " + player.displayName + " leaving")
+            console.log("Deleted room " + channel.id + " due to " + player.displayName + " leaving")
             privateChannels.delete(channel.id)
-            console.log(privateChannels.get(channel.id))
             channel.delete()
         }
 
@@ -155,17 +152,14 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                 privateChannels.get(channel.id).splice(index, 1);
             }
             
-            console.log(Date.now() + player.displayName + " left a room")
-            console.log(privateChannels.get(channel.id))
+            console.log(player.displayName + " left a room")
 
             const newAdminID = privateChannels.get(channel.id)[0]
 
             if (newAdminID !== oldAdminID) {
                 const newAdmin = oldState.guild.members.cache.get(newAdminID)
 
-                console.log(Date.now() + "Because " + player.displayName + " left a room they owned, " + newAdmin.displayName + " will take over.")
-                console.log(privateChannels.get(channel.id))
-
+                console.log("Because " + player.displayName + " left a room they owned, " + newAdmin.displayName + " will take over")
                 
                 channel.permissionOverwrites.get(oldAdminID).delete()
                     .then(channel.overwritePermissions([
