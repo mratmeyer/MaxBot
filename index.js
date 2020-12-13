@@ -86,10 +86,12 @@ client.on('message', async msg => {
                             startTime: Date.now(),
                             stage: 1
                         })
+                        console.log("Initialized vanity setup for " + msg.member.nickname + ".")
                     }
                 } else {
                     if (msg.content.toLowerCase() === '!vanity remove') {
                         msg.channel.send(author.toString() + ' Removing your role.')
+                        console.log("Removing vanity role for " + msg.member.nickname + ".")
                         msg.member.roles.cache.filter(role => !offLimits.includes(role.name.toUpperCase())).filter(role => role.name !== '@everyone').forEach(role => 
                             role.delete()
                         )
