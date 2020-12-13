@@ -53,13 +53,14 @@ client.on('message', async msg => {
                         return
                     }
                     roleSetup.get(authorID).color = content
-                    let newRole = await msg.channel.guild.roles.create({
+                    msg.channel.guild.roles.create({
                         data: {
                             name: roleSetup.get(authorID).name,
                             color: roleSetup.get(authorID).color.toUpperCase(),
                         }
-                    }).then(console.log).catch(console.error);
-                    // msg.member.roles.add(await msg.guild.roles.fetch(newRole).id)
+                    })
+                    .then(console.log("Sucessfully created vanity role!")).catch(console.error)
+                    .then(newRole => msg.member.roles.add(newRole)).catch(console.error)
                     msg.channel.send(author.toString() + ' Thanks! Creating role ' + roleSetup.get(authorID).name + ' with the color ' + roleSetup.get(authorID).color + ' now.')
                     roleSetup.delete(authorID)
                 }
@@ -74,12 +75,28 @@ client.on('message', async msg => {
             const command = args.shift().toLowerCase();
         
             // Someone ran !vanity and isn't registered
-            if (command === 'vanity' && roleSetup.get(authorID) === undefined) {
-                msg.channel.send(author.toString() + ' What do you want your vanity role to be named?')
-                roleSetup.set(authorID, { 
-                    startTime: Date.now(),
-                    stage: 1
-                })
+            if (command === 'vanity') {
+                let roleSize = 0
+                await msg.member.roles.cache.filter(role => !offLimits.includes(role.name.toUpperCase())).filter(role => role.name !== '@everyone').tap(roles => roleSize = roles.size)
+
+                if (roleSize < 1) {
+                    if (roleSetup.get(authorID) === undefined) {
+                        msg.channel.send(author.toString() + ' What do you want your vanity role to be named?')
+                        roleSetup.set(authorID, { 
+                            startTime: Date.now(),
+                            stage: 1
+                        })
+                    }
+                } else {
+                    if (msg.content.toLowerCase() === '!vanity remove') {
+                        msg.channel.send(author.toString() + ' Removing your role.')
+                        msg.member.roles.cache.filter(role => !offLimits.includes(role.name.toUpperCase())).filter(role => role.name !== '@everyone').forEach(role => 
+                            role.delete()
+                        )
+                    } else {
+                        msg.channel.send(author.toString() + ' Type \'!vanity remove\' to remove your role.')
+                    }
+                }
             }
         }
     }
