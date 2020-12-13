@@ -18,7 +18,7 @@ client.once('ready', () => {
     // Matches join to create channel ID with the parent category to create the private channel under
     channelConfig.set('780570910171463680', '627381429877211150')
 
-    client.user.setActivity("Try the new !vanity command", { type: 'CUSTOM_STATUS' }); 
+    client.user.setActivity("!vanity", { type: 'LISTENING' }); 
 
     console.log('MaxBot connected and ready to go!')
 })
