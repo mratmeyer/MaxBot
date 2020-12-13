@@ -1,8 +1,6 @@
-// const express = require('express')
-// const app = express();
-// app.disable('x-powered-by')
+// const http = require('http')
 
-// const PORT = process.env.PORT || 8080
+// const port = process.env.PORT || 8080
 
 const Discord = require('discord.js')
 const client = new Discord.Client()
@@ -197,10 +195,9 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
 client.login(token)
 
-// app.get('/*', (req, res) => {
-//     res.status(404).send('Beep boop.')
+// http.createServer((req, res) => {
+//     res.writeHead(404);
+//     res.end('Beep boop.');
+// }).listen(port, '127.0.0.1', () => {
+//     console.log('Health checks open on port ' + port + '.')
 // })
-
-// app.listen(PORT, () => {
-//     console.log('Health checks open on port ' + PORT + '.');
-// });
