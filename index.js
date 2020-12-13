@@ -8,7 +8,7 @@ const client = new Discord.Client()
 const token = process.env.TOKEN
 
 const prefix = '!'
-const offLimits = [ "ADMIN", "ADMINISTRATOR", "ADMINISTRAITOR", "MAXBOT", "INTERROGATION", "QUARANTINE" ]
+const offLimits = [ "@EVERYONE", "ADMIN", "ADMINISTRATOR", "ADMINISTRAITOR", "MAXBOT", "INTERROGATION", "QUARANTINE" ]
 
 let channelConfig = new Map()
 let privateChannels = new Map()
@@ -77,7 +77,7 @@ client.on('message', async msg => {
             // Someone ran !vanity and isn't registered
             if (command === 'vanity') {
                 let roleSize = 0
-                await msg.member.roles.cache.filter(role => !offLimits.includes(role.name.toUpperCase())).filter(role => role.name !== '@everyone').tap(roles => roleSize = roles.size)
+                await msg.member.roles.cache.filter(role => !offLimits.includes(role.name.toUpperCase())).tap(roles => roleSize = roles.size)
 
                 if (roleSize < 1) {
                     if (roleSetup.get(authorID) === undefined) {
@@ -92,7 +92,7 @@ client.on('message', async msg => {
                     if (msg.content.toLowerCase() === '!vanity remove') {
                         msg.channel.send(author.toString() + ' Removing your role.')
                         console.log("Removing vanity role for " + msg.member.nickname + ".")
-                        msg.member.roles.cache.filter(role => !offLimits.includes(role.name.toUpperCase())).filter(role => role.name !== '@everyone').forEach(role => 
+                        msg.member.roles.cache.filter(role => !offLimits.includes(role.name.toUpperCase())).forEach(role => 
                             role.delete()
                         )
                     } else {
