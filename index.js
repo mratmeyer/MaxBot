@@ -1,6 +1,6 @@
-const http = require('http')
+// const http = require('http')
 
-const port = process.env.PORT || 8080
+// const port = process.env.PORT || 8080
 
 const Discord = require('discord.js')
 const client = new Discord.Client()
@@ -197,9 +197,9 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
 client.login(token)
 
-http.createServer((req, res) => {
-    res.writeHead(404);
-    res.end('Beep boop.');
-}).listen(port, '0.0.0.0', () => {
-    console.log('Health checks open on port ' + port + '.')
-})
+// http.createServer((req, res) => {
+//     res.writeHead(404);
+//     res.end('Beep boop.');
+// }).listen(port, '0.0.0.0', () => {
+//     console.log('Health checks open on port ' + port + '.')
+// })
