@@ -129,7 +129,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             }).then(console.log("New room created for: " + player.displayName + "(" + player.id + ")")).catch(console.error)
 
             // Move the player to the private channel and add it to database
-            player.voice.setChannel(privateChannel.id)
+            await player.voice.setChannel(privateChannel.id)
             privateChannels.set(privateChannel.id, [ player.id ])
 
         }
@@ -157,7 +157,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         if (privateChannels.has(channel.id) && channel.members.size === 0) {
             console.log("Deleted room " + channel.id + " due to " + player.displayName + " leaving")
             privateChannels.delete(channel.id)
-            channel.delete()
+            await channel.delete()
         }
 
         // User leaves a channel room with more than 0 members - see if we can transfer ownership
@@ -174,7 +174,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             const newAdminID = privateChannels.get(channel.id)[0]
 
             if (newAdminID !== oldAdminID) {
-                const newAdmin = oldState.guild.members.cache.get(newAdminID)
+                const newAdmin = await oldState.guild.members.cache.get(newAdminID)
 
                 console.log("Because " + player.displayName + " left a room they owned, " + newAdmin.displayName + " will take over")
                 
