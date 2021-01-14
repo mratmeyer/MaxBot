@@ -10,16 +10,10 @@ const token = process.env.TOKEN
 const prefix = '!'
 const offLimits = [ "@EVERYONE", "ADMIN", "ADMINISTRATOR", "ADMINISTRAITOR", "MAXBOT", "INTERROGATION", "QUARANTINE" ]
 
-let channelConfig = new Map()
 let privateChannels = new Map()
 let roleSetup = new Map()
 
 client.once('ready', () => {
-    // Matches join to create channel ID with the parent category to create the private channel under
-    channelConfig.set('780570910171463680', '627381429877211150') // MCF
-    channelConfig.set('799382941209198602', '799382791569539102') // TSA - Tutoring
-    channelConfig.set('799387462275039247', '799383580576579614') // TSA - Gaming
-
     console.log('MaxBot connected and ready to go!')
 })
 
@@ -116,12 +110,12 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         const channel = newChannel
 
         // User joins the 'Join to Create' channel
-        if (channelConfig.has(channel.id)) {
+        if (channel.name == "Join to Create") {
 
             // Generate a new private channel
             let privateChannel = await guild.channels.create(player.displayName + "'s channel", { 
                 type: 'voice', 
-                parent: channelConfig.get(channel.id),
+                parent: channel.parentID,
                 permissionOverwrites: [
                     {
                         id: player.id,
