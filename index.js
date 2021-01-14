@@ -16,8 +16,9 @@ let roleSetup = new Map()
 
 client.once('ready', () => {
     // Matches join to create channel ID with the parent category to create the private channel under
-    channelConfig.set('780570910171463680', '627381429877211150')
-    channelConfig.set('799382941209198602', '799382791569539102')
+    channelConfig.set('780570910171463680', '627381429877211150') // MCF
+    channelConfig.set('799382941209198602', '799382791569539102') // TSA - Tutoring
+    channelConfig.set('799387462275039247', '799383580576579614') // TSA - Gaming
 
     console.log('MaxBot connected and ready to go!')
 })
