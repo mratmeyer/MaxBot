@@ -17,6 +17,7 @@ let roleSetup = new Map()
 client.once('ready', () => {
     // Matches join to create channel ID with the parent category to create the private channel under
     channelConfig.set('780570910171463680', '627381429877211150')
+    channelConfig.set('799382941209198602', '799382791569539102')
 
     console.log('MaxBot connected and ready to go!')
 })
