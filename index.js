@@ -23,7 +23,7 @@ client.on('message', async msg => {
     const content = msg.content
 
     // Request sent in #commands
-    if (msg.channel.id === '767194969605537792' || msg.channel.id === '786836345263226910') {
+    if (msg.channel.id === '767194969605537792' || msg.channel.id === '786836345263226910' || msg.channel.id == '873737969910030417') {
         // A setup process is already registered
         if (roleSetup.get(authorID) !== undefined) {
             const timeDifference = Math.floor((Date.now() - roleSetup.get(authorID).startTime) / 1000)
