@@ -2,6 +2,8 @@ version: "3.9"
 services:
   web:
     restart: unless-stopped
+    env_file:
+      - .env
     build: .
     ports:
       - "8082:8080"
